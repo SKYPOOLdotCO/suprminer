@@ -41,6 +41,7 @@
 extern pthread_mutex_t stratum_sock_lock;
 extern pthread_mutex_t stratum_work_lock;
 extern bool opt_debug_diff;
+extern bool x16rt_gin;
 
 bool opt_tracegpu = false;
 
@@ -1469,11 +1470,21 @@ static bool stratum_notify(struct stratum_ctx *sctx, json_t *params)
 		}
 	}
 	if (is_x16rt) {
-		denom10 = json_string_value(json_array_get(params, p++));
-		denom100 = json_string_value(json_array_get(params, p++));
-		denom1000 = json_string_value(json_array_get(params, p++));
-		denom10000 = json_string_value(json_array_get(params, p++));
-		prooffullnode = json_string_value(json_array_get(params, p++));
+		if (json_array_size(params) < 12)
+		{
+			x16rt_gin = true;
+			is_x16rt = false;
+			applog(LOG_DEBUG, "x16rt-gin");
+		}
+                else
+                {
+			applog(LOG_DEBUG, "x16rt-veil");
+			denom10 = json_string_value(json_array_get(params, p++));
+			denom100 = json_string_value(json_array_get(params, p++));
+			denom1000 = json_string_value(json_array_get(params, p++));
+			denom10000 = json_string_value(json_array_get(params, p++));
+			prooffullnode = json_string_value(json_array_get(params, p++));
+		}
 	}
 	coinb1 = json_string_value(json_array_get(params, p++));
 	coinb2 = json_string_value(json_array_get(params, p++));

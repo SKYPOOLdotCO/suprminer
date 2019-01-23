@@ -159,6 +159,7 @@ int device_interactive[MAX_GPUS] = { 0 };
 int opt_nfactor = 0;
 bool opt_autotune = true;
 char *jane_params = NULL;
+bool x16rt_gin = false;
 
 // pools (failover/getwork infos)
 struct pool_infos pools[MAX_POOLS] = { 0 };
@@ -1648,7 +1649,7 @@ static bool stratum_gen_work(struct stratum_ctx *sctx, struct work *work)
 		memcpy(&work->data[12], sctx->job.coinbase, 32); // merkle_root
 		work->data[20] = 0x80000000;
 		if (opt_debug) applog_hex(work->data, 80);
-} else if (opt_algo == ALGO_X16RT) {
+} else if (opt_algo == ALGO_X16RT && !x16rt_gin) {
         work->data[17] = le32dec(sctx->job.ntime);
         work->data[18] = le32dec(sctx->job.nbits);
         work->data[20] = 0x80000000;
